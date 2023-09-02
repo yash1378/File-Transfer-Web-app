@@ -1,74 +1,54 @@
 /* // styles/daisyui.css */
-body{
-    background-color: linear-gradient(to bottom,  #000059, #800080);
+body {
+  background-color: linear-gradient(to bottom, #000059, #800080);
 }
 /* Import daisyUI styles */
-#heading{
-    /* border: 2px solid green; */
-    position: relative;
-    top: 1vh;
-    text-align: center;
-    height: 15vh;
-    padding-top:3vh ;
-    font-size: 40px;
-    border-radius: 10px;
-    margin-left: 1vw;
-    margin-right: 1vw;
-    box-shadow: 5px 3px 4px rgba(1, 1, 72, 1000);
+#heading {
+  /* border: 2px solid green; */
+  position: relative;
+  top: 1vh;
+  text-align: center;
+  height: 15vh;
+  padding-top: 3vh;
+  font-size: 40px;
+  border-radius: 10px;
+  margin-left: 1vw;
+  margin-right: 1vw;
+  box-shadow: 5px 3px 4px rgba(1, 1, 72, 1000);
 }
 
-#upload{
-    background-color:rgb(255, 102, 0) ;
-    color: rgb(255, 255, 255);
-    border-radius: 5px;
-    position: relative;
-    left: 21vw;
-    top: 1vh;
-    font-size: 20px;
+/*  */
+#nameInput {
+  position: relative;
+  top: 10vh;
+  width: 98vw;
+  text-align: center;
+  left: 1vw;
+  border-radius: 10px;
+  font-size: 25px;
+  height: 15vh;
+  box-shadow: 5px 3px 10px rgba(1, 1, 72, 1000);
 }
 
-#uploadForm{
-    /* border: 2px solid red; */
-    position: relative;
-    margin-top: 4vh;
-    /* text-align: center; */
-    padding-left: 13vw;
-    box-shadow: 5px 3px 4px rgba(1, 1, 72, 1000);
-    font-size: 15px;
-    height: 15vh;
-    padding-top: 5vh;
-    top:0;
-    border-radius: 10px;
-    margin-left: 1vw;
-    margin-right: 1vw;
+#roomInput {
+  position: relative;
+  top: 13vh;
+  width: 98vw;
+  text-align: center;
+  left: 1vw;
+  border-radius: 10px;
+  font-size: 25px;
+  height: 15vh;
+  box-shadow: 5px 3px 10px rgba(1, 1, 72, 1000);
+}
+#joinRoomButton {
+  position: relative;
+  top: 15vh;
+  left: 1vw;
+  font-size: 20px;
+  width: 98vw;
+  z-index: 100;
+  box-shadow: 5px 3px 4px rgba(1, 1, 72, 1000);
 }
 
-#roomInput{
-    position: relative;
-    top: 4vh;
-    width: 98vw;
-    text-align: center;
-    left: 1vw;
-    border-radius: 10px;
-    font-size: 25px;
-    height: 15vh;
-    box-shadow: 5px 3px 4px rgba(1, 1, 72, 1000);
-}
-#joinRoomButton{
-    position: relative;
-    top: 7vh;
-    left: 1vw;
-    font-size: 20px;
-    width: 98vw;
-    box-shadow: 5px 3px 4px rgba(1, 1, 72, 1000);
-}
-
-#messages{
-    position: relative;
-    top: 10vh;
-    left: 1vw;
-    font-size: 15px;
-    width: 98vw;
-    height: 15vh;
-}
 /* Add your custom styles here */
