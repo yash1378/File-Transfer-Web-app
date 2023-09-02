@@ -11,7 +11,20 @@ const membersList = [];
 const userList = [];
 const userSocketMap = {};
 const port = 3300;
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
+
+// Define a proxy route
+const apiProxy = createProxyMiddleware('/api', {
+  target: 'http://target-server-url', // Replace with the URL of your target server
+  changeOrigin: true, // Necessary for virtual hosted sites
+  pathRewrite: {
+    '^/api': '', // Remove the '/api' prefix when forwarding the request
+  },
+});
+
+// Use the proxy middleware
+app.use('/api', apiProxy);
 // Use the cors middleware to allow all origins (for local development)
 app.use(cors());
 
@@ -38,8 +51,8 @@ app.post("/upload/:room", (req, res) => {
   console.log(req.body);
   console.log(req.body.sendlist);
   const sendList = req.body.sendlist.split(",");
-  console.log(sendList[0]);
-  console.log(sendList[1]);
+  // console.log(sendList[0]);
+  // console.log(sendList[1]);
 
   // Parse the list of names from the request body
 
