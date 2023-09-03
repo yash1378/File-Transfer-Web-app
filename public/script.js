@@ -2,11 +2,15 @@ const socket = io();
 // Initialize an array to store selected member names
 const selectedMembers = [];
 
-
 // Join a room when the button is clicked
-document.getElementById("joinRoomButton").addEventListener("click", () => {
+document.getElementById("joinRoomButton").addEventListener("click", (event) => {
+  event.preventDefault();
   const room = document.getElementById("roomInput").value;
   const Name = document.getElementById("nameInput").value;
+  const form = document.getElementById("form");
+  const f = document.getElementById("haha");
+  f.style.display = "none";
+  form.style.display = "block";
 
   socket.emit("joinRoom", { r: room, n: Name });
 
@@ -28,44 +32,41 @@ document.getElementById("joinRoomButton").addEventListener("click", () => {
     list.style.display = "block";
   }
 
-
-
   socket.on("updateMembers", (membersList) => {
     // Update the HTML to display the list of members
-    const membersListContainer = document.getElementById("membersListContainer");
+    const membersListContainer = document.getElementById(
+      "membersListContainer"
+    );
     membersListContainer.innerHTML = "";
-  
+
     membersList.forEach((member) => {
       // Create a list item element
       const memberItem = document.createElement("li");
-  
+
       // Create a checkbox element
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.value = member;
       checkbox.name = "selectedMembers"; // You can give it a unique name
       checkbox.className = "member-checkbox"; // Add the class "member-checkbox"
-  
+
       // Create a label for the checkbox with the member's name
       const label = document.createElement("label");
       label.textContent = member;
-  
+
       // Append the checkbox and label to the list item
       memberItem.appendChild(checkbox);
       memberItem.appendChild(label);
-  
+
       // Append the list item to the membersListContainer
       membersListContainer.appendChild(memberItem);
-  
+
       // Add an event listener for the checkbox
       checkbox.addEventListener("change", () => {
         handleCheckboxChange(checkbox);
       });
     });
   });
-  
-  
-
 
   socket.on("jointoast", (msg) => {
     const toastContainer = document.createElement("div");
@@ -96,7 +97,7 @@ document.getElementById("uploadForm").addEventListener("submit", (event) => {
   const formData = new FormData(event.target);
   formData.append("room", room);
   // socket.emit('sendlist',selectedMembers);
-  formData.append("sendlist",selectedMembers);
+  formData.append("sendlist", selectedMembers);
 
   fetch("/upload/" + room, {
     method: "POST",
@@ -135,33 +136,87 @@ socket.on("messageReceived", (message) => {
   document.getElementById("messages").innerText += message + "\n";
 });
 
+// Add this at the top of your script.js
+const fileReceiveToast = document.getElementById("fileReceiveToast");
+const acceptFileButton = document.getElementById("acceptFileButton");
+const rejectFileButton = document.getElementById("rejectFileButton");
+const messagesList = document.getElementById("messages");
+let receivedFilePath = null;
+let receivedRoom = null;
+
+// Function to show the file receive toast
+function showFileReceiveToast(filePath) {
+  receivedFilePath = filePath;
+  fileReceiveToast.classList.remove("hidden");
+}
+
+// Event listener for the "Accept" button
+acceptFileButton.addEventListener("click", () => {
+  // Check if a file has been received
+  if (receivedFilePath) {
+    // Create a new list item for the message
+    const listItem = document.createElement("li");
+    const message = `File uploaded to room: ${receivedRoom}`;
+    listItem.textContent = message;
+
+    // Create a button for downloading the file
+    const downloadButton = document.createElement("button");
+    downloadButton.textContent = "Download File";
+    downloadButton.className = "download-button"; // Add a CSS class for styling
+
+    // Attach the file path to the button as a data attribute
+    downloadButton.dataset.filePath = receivedFilePath;
+
+    // Append the download button to the list item
+    listItem.appendChild(downloadButton);
+
+    // Append a line break after the list item
+    listItem.appendChild(document.createElement("br"));
+
+    // Append the list item to the messages list
+    messagesList.appendChild(listItem);
+
+    // Make sure the box is visible when a file is uploaded
+    const box = document.getElementById("box");
+    box.style.display = "block";
+
+    // Hide the toast
+    fileReceiveToast.classList.add("hidden");
+  }
+});
+
+// Event listener for the "Reject" button
+rejectFileButton.addEventListener("click", () => {
+  // Hide the toast
+  fileReceiveToast.classList.add("hidden");
+});
+
+// Add an event listener to handle file download when the button is clicked
+document.addEventListener("click", (event) => {
+  if (event.target && event.target.className === "download-button") {
+    const filePath = event.target.dataset.filePath;
+
+    // Trigger the file download by creating an invisible anchor element
+    const downloadLink = document.createElement("a");
+    downloadLink.href = filePath;
+    downloadLink.download = filePath.split("/").pop(); // Extract the filename
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  }
+});
+
+// ...
+
+// Update the "link" event handler to show the file receive toast
 socket.on("link", (data) => {
   const message = `File uploaded to room: ${data.room} `;
-
-  // Create a new list item for the message
-  const listItem = document.createElement("li");
-  listItem.textContent = message;
-
-  // Create a download link for the file
-  const downloadLink = document.createElement("a");
-  downloadLink.href = data.filePath; // This should be the path to the uploaded file on the server
-  downloadLink.download = data.filePath.split("/").pop(); // Extract the filename
-  downloadLink.textContent = "Download File";
-
-  // Append the download link to the list item
-  listItem.appendChild(downloadLink);
-
-  // Append a line break after the list item
-  listItem.appendChild(document.createElement("br"));
-
-  // Append the list item to the messages list
-  const messagesList = document.getElementById("messages");
-  messagesList.appendChild(listItem);
-
-  // Make sure the box is visible when a file is uploaded
-  const box = document.getElementById("box");
-  box.style.display = "block";
+  receivedRoom = data.room; // Store the room for later use
+  showFileReceiveToast(data.filePath);
 });
+
+
 
 socket.on("left", (NAAM) => {
   const toastContainer = document.createElement("div");
@@ -206,8 +261,3 @@ selectAllCheckbox.addEventListener("change", function () {
     handleCheckboxChange(checkbox);
   });
 });
-
-
-
-
-

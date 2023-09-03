@@ -21,7 +21,8 @@
     <!-- <div class="flex justify-center items-center h-screen border-4 border-indigo-400 p-0"> -->
     <div class="flex flex-row">
       <div
-        class="relative z-5 w-50  mx-6 h-80 top-5 pt-10 pl-2 pr-2 bg-white rounded-lg shadow"
+        class="relative z-5 w-50 mx-6 h-80 top-5 pt-10 pl-2 pr-2 bg-white rounded-lg shadow hidden"
+        id="form"
       >
         <form class="space-y-6" id="uploadForm" enctype="multipart/form-data">
           <h5 class="text-xl font-medium text-gray-900 dark:text-white">
@@ -40,6 +41,15 @@
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
               required
             />
+            <div class="w-full bg-gray-200 rounded-full dark:bg-gray-700">
+              <div
+                id="uploadProgress"
+                class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
+                style="width: 0%"
+              >
+                0%
+              </div>
+            </div>
           </div>
           <button
             type="submit"
@@ -85,14 +95,16 @@
       class="w-full z-500 h-70 relative max-w-md mx-6 top-10 p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700 hidden"
       id="list"
     >
-    <div class="flex items-center justify-between mb-4">
-      <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">
-        Available users in Your Room
-      </h5>
-      <label class="text-sm font-medium text-blue-600 dark:text-blue-500">
-        <input type="checkbox" id="selectAllMembers" /> Select All
-      </label>
-    </div>
+      <div class="flex items-center justify-between mb-4">
+        <h5
+          class="text-xl font-bold leading-none text-gray-900 dark:text-white"
+        >
+          Available users in Your Room
+        </h5>
+        <label class="text-sm font-medium text-blue-600 dark:text-blue-500">
+          <input type="checkbox" id="selectAllMembers" /> Select All
+        </label>
+      </div>
       <div class="flow-root">
         <ul
           role="list"
@@ -103,22 +115,78 @@
         </ul>
       </div>
     </div>
-
-    <!-- Room selection -->
-    <input type="text" id="nameInput" placeholder="Enter your name" />
-    <input type="text" id="roomInput" placeholder="Enter room name" />
-
-    <!-- <button class="btn btn-accent btn-outline" >Join Room</button> -->
-    <button
-      type="button"
-      class="btn btn-primary active"
-      data-bs-toggle="button"
-      autocomplete="off"
-      id="joinRoomButton"
-      aria-pressed="true"
+    <div
+      class="w-80 p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700"
+      id="haha"
     >
-      JoinRoom
-    </button>
+      <form class="space-y-6" id="joinRoomForm">
+        <h5 class="text-xl font-medium text-gray-900 dark:text-white">
+          Join a Room
+        </h5>
+        <div>
+          <label
+            for="nameInput"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Your name</label
+          >
+          <input
+            type="text"
+            name="name"
+            id="nameInput"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            placeholder="Enter your name"
+            required
+          />
+        </div>
+        <div>
+          <label
+            for="roomInput"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Room name</label
+          >
+          <input
+            type="text"
+            name="room"
+            id="roomInput"
+            placeholder="Enter room name"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          id="joinRoomButton"
+          class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Join Room
+        </button>
+      </form>
+    </div>
+
+    <!-- Add this inside the <body> element -->
+    <div
+      id="fileReceiveToast"
+      class="hidden fixed bottom-5 left-5 p-4 bg-white border border-gray-300 rounded-lg shadow-md"
+    >
+      <div class="text-lg font-medium text-gray-900">
+        You've received a file!
+      </div>
+      <div class="mt-2 text-sm text-gray-500">Do you want to accept it?</div>
+      <div class="mt-4 flex justify-end space-x-4">
+        <button
+          id="acceptFileButton"
+          class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        >
+          Accept
+        </button>
+        <button
+          id="rejectFileButton"
+          class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+        >
+          Reject
+        </button>
+      </div>
+    </div>
 
     <!-- Display messages -->
 

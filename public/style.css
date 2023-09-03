@@ -17,39 +17,14 @@ body {
   box-shadow: 5px 3px 4px rgba(1, 1, 72, 1000);
 }
 
-/*  */
-#nameInput {
-  position: relative;
-  top: 10vh;
-  width: 98vw;
-  text-align: center;
-  left: 1vw;
-  border-radius: 10px;
-  font-size: 25px;
-  height: 15vh;
-  box-shadow: 5px 3px 10px rgba(1, 1, 72, 1000);
+#haha{
+  position: absolute;
+  /* height: 40vh ; */
+  left: 37vw;
+  top: 20vh;
+  width: 30vw;
 }
 
-#roomInput {
-  position: relative;
-  top: 13vh;
-  width: 98vw;
-  text-align: center;
-  left: 1vw;
-  border-radius: 10px;
-  font-size: 25px;
-  height: 15vh;
-  box-shadow: 5px 3px 10px rgba(1, 1, 72, 1000);
-}
-#joinRoomButton {
-  position: relative;
-  top: 15vh;
-  left: 1vw;
-  font-size: 20px;
-  width: 98vw;
-  z-index: 100;
-  box-shadow: 5px 3px 4px rgba(1, 1, 72, 1000);
-}
 
 /* Add your custom styles here */
 #choose {
@@ -67,4 +42,18 @@ body {
   /* Style when the input is focused */
   border-color: #007bff; /* Change this color to your preferred focus color */
   outline: none; /* Remove the default focus outline */
+}
+
+/* Style for the "Download File" button */
+.download-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+/* Hover effect for the button */
+.download-button:hover {
+  background-color: #45a049;
 }
