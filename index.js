@@ -15,7 +15,7 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 
 // Define a proxy route
 const apiProxy = createProxyMiddleware("/api", {
-  target: "http://target-server-url", // Replace with the URL of your target server
+  target: "http://localhost:3300", // Replace with the URL of your target server
   changeOrigin: true, // Necessary for virtual hosted sites
   pathRewrite: {
     "^/api": "", // Remove the '/api' prefix when forwarding the request
@@ -45,53 +45,10 @@ app.use(
   express.static("C:/Users/HP/Desktop/New folder/Referrrrer/app")
 );
 
-// function emitProgress(socket, progress) {
-//   socket.emit("uploadProgress", { progress });
-// }
 
-app.post("/upload/:room", (req, res) => {
-  const room = req.params.room;
-  console.log(req.body);
-  console.log(req.body.sendlist);
-  const sendList = req.body.sendlist.split(",");
 
-  // Parse the list of names from the request body
 
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send("No files were uploaded.");
-  }
 
-  const uploadedFile = req.files.file;
-
-  uploadedFile.mv(
-    "C:/Users/HP/Desktop/New folder/Referrrrer/app/" + uploadedFile.name,
-    (err) => {
-      if (err) {
-        return res.status(500).send(err);
-      }
-
-      const uploadedFilePath = `/uploads/${uploadedFile.name}`;
-
-      // Assuming you send it as an array of names
-      // Emit the fileUploaded event to specific users
-      sendList.forEach((userName) => {
-        const socketId = userSocketMap[userName];
-        if (socketId) {
-          io.to(socketId).emit("fileUploaded", {
-            filePath: uploadedFilePath,
-            room,
-          });
-          io.to(socketId).emit("link", { filePath: uploadedFilePath, room });
-        }
-      });
-
-      // io.to(room).emit("fileUploaded", { filePath: uploadedFilePath, room });
-      // io.to(room).emit("link", { filePath: uploadedFilePath, room });
-
-      return res.status(200).send("File uploaded to room: " + room);
-    }
-  );
-});
 
 io.on("connection", (socket) => {
   console.log("A user connected");
@@ -117,6 +74,61 @@ io.on("connection", (socket) => {
     console.log(`User joined room: ${data.r}`);
   });
 
+  app.post("/upload/:room", (req, res) => {
+    const room = req.params.room;
+    const sendList = req.body.sendlist.split(",");
+    const n = req.body.n;
+    console.log(req.body.n);
+    console.log(sendList);
+    const uploadedFiles = req.files['files[]']; // Access all uploaded files
+  
+    if (!uploadedFiles || Object.keys(uploadedFiles).length === 0) {
+      return res.status(400).send("No files were uploaded.");
+    }
+  
+    const uploadedFilePaths = []; // Create an array to store file paths
+  
+    // Process each uploaded file
+    for (const fileKey in uploadedFiles) {
+      const uploadedFile = uploadedFiles[fileKey];
+      console.log(uploadedFile.name);
+  
+      uploadedFile.mv(
+        `C:/Users/HP/Desktop/New folder/Referrrrer/app/${uploadedFile.name}`,
+        (err) => {
+          if (err) {
+            return res.status(500).send(err);
+          }
+  
+          const uploadedFilePath = `/uploads/${uploadedFile.name}`;
+          uploadedFilePaths.push(uploadedFilePath); // Add file path to the array
+  
+          // If all files are processed, emit the array of file paths to specific users
+          if (uploadedFilePaths.length === Object.keys(uploadedFiles).length) {
+            sendList.forEach((userName) => {
+              const socketId = userSocketMap[userName];
+              if (socketId) {
+                io.to(socketId).emit("filesUploaded", {
+                  filePaths: uploadedFilePaths,
+                  room,
+                });
+                io.to(socketId).emit("link", { filePath: uploadedFilePath, room });
+                console.log("n->",n);
+                io.to(socketId).emit("sender",n);
+              }
+            });
+  
+  
+  
+            res.status(200).send(`Files uploaded to room: ${room}`);
+          }
+        }
+      );
+    }
+  });
+  
+  
+  
   // When a user disconnects
   socket.on("disconnect", () => {
     // Identify the userName and roomNo of the disconnected user

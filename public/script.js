@@ -1,6 +1,15 @@
 const socket = io();
 // Initialize an array to store selected member names
+// Initialize an array to store selected member names
 const selectedMembers = [];
+// Add this at the top of your script.js
+const fileReceiveToast = document.getElementById("fileReceiveToast");
+const acceptFileButton = document.getElementById("acceptFileButton");
+const rejectFileButton = document.getElementById("rejectFileButton");
+const messagesList = document.getElementById("messages");
+let receivedFilePath = null;
+let receivedRoom = null;
+
 
 // Join a room when the button is clicked
 document.getElementById("joinRoomButton").addEventListener("click", (event) => {
@@ -90,45 +99,124 @@ document.getElementById("joinRoomButton").addEventListener("click", (event) => {
   });
 });
 
-// Upload a file
+
 document.getElementById("uploadForm").addEventListener("submit", (event) => {
   event.preventDefault();
   const room = document.getElementById("roomInput").value;
-  const formData = new FormData(event.target);
+  const n = document.getElementById("nameInput").value;
+
+  const fileInput = document.getElementById('choose');
+  const files = fileInput.files;
+
+  if (files.length === 0) {
+    alert('Please select one or more files.');
+    return;
+  }
+
+  // Create a FormData object to send the files
+  const formData = new FormData();
+  for (let i = 0; i < files.length; i++) {
+    formData.append('files[]', files[i]);
+  }
+  console.log(selectedMembers);
   formData.append("room", room);
-  // socket.emit('sendlist',selectedMembers);
   formData.append("sendlist", selectedMembers);
+  formData.append("n",n);
 
   fetch("/upload/" + room, {
     method: "POST",
     body: formData,
   })
-    .then((response) => response.text())
-    .then((data) => {
-      console.log(data);
-    });
+  .then((response) => response.text())
+  .then((data) => {
+    console.log(data);
+  });
 });
 
-// Receive file upload notifications
+
+
+// Function to handle file upload and display messages
+// Initialize an array to store uploaded file data
+const uploadedFilesData = [];
+
+// Function to handle file upload and store file data
+function handleFileUpload(filePath, room) {
+  // Store the file data in the uploadedFilesData array
+  uploadedFilesData.push({ filePath, room });
+
+  // Show the toast for file receive
+  showFileReceiveToast(filePath);
+}
+
+var sen ;
+socket.on("sender",(sender)=>{
+  console.log(sender);
+  sen = sender;
+})
+
+// Event listener for the "Accept" button
+acceptFileButton.addEventListener("click", () => {
+  // Check if there are uploaded files to display
+
+  const Item = document.createElement("li");
+  const r = document.createElement("div");
+  r.innerHTML = `<b>These Files have been uploaded by ${sen}</b>`;
+  Item.appendChild(r);
+  messagesList.appendChild(r);
+  if (uploadedFilesData.length > 0) {
+    uploadedFilesData.forEach((fileData) => {
+      // Create a new list item for each uploaded file
+      const listItem = document.createElement("li");
+      const message = `File uploaded to room: ${fileData.room}`;
+      listItem.textContent = message;
+
+      // Create a button for downloading the file
+      const downloadButton = document.createElement("button");
+      downloadButton.textContent = "Download File";
+      downloadButton.className = "download-button";
+
+      // Attach the file path to the button as a data attribute
+      downloadButton.dataset.filePath = fileData.filePath;
+
+      // Append the download button to the list item
+      listItem.appendChild(downloadButton);
+
+      // Append a line break after the list item
+      listItem.appendChild(document.createElement("br"));
+
+      // Append the list item to the messages list
+      messagesList.appendChild(listItem);
+
+      // Make sure the box is visible when a file is uploaded
+      const box = document.getElementById("box");
+      box.style.display = "block";
+    });
+    const Item = document.createElement("li");
+    const r = document.createElement("div");
+    r.innerHTML = `<br>`;
+    Item.appendChild(r);
+    messagesList.appendChild(r);
+
+    // Clear the uploaded files data
+    uploadedFilesData.length = 0;
+
+    // Hide the toast
+    fileReceiveToast.classList.add("hidden");
+  }
+});
+
+// Handle the "fileUploaded" event
 socket.on("fileUploaded", (data) => {
-  const toastContainer = document.createElement("div");
-  toastContainer.id = "toast-bottom-right";
-  toastContainer.className =
-    "fixed flex items-center w-full max-w-xs p-4 space-x-4 text-white bg-blue-500 divide-x divide-gray-200 rounded-lg shadow right-5 bottom-5 ";
-  toastContainer.setAttribute("role", "alert");
+  showFileReceiveToast(data.filePath);
+  handleFileUpload(data.filePath, data.room);
+});
 
-  const toastContent = document.createElement("div");
-  toastContent.className = "text-sm font-normal";
-  toastContent.textContent = "A File has been Uploaded";
-
-  toastContainer.appendChild(toastContent);
-
-  document.body.appendChild(toastContainer);
-
-  // Remove the toast after 3 seconds
-  setTimeout(function () {
-    document.body.removeChild(toastContainer);
-  }, 3000);
+// Handle the "filesUploaded" event
+socket.on("filesUploaded", (data) => {
+  showFileReceiveToast(data.filePaths[0]); // Show toast for the first file
+  data.filePaths.forEach((filePath) => {
+    handleFileUpload(filePath, data.room);
+  });
 });
 
 // Receive messages
@@ -136,60 +224,23 @@ socket.on("messageReceived", (message) => {
   document.getElementById("messages").innerText += message + "\n";
 });
 
-// Add this at the top of your script.js
-const fileReceiveToast = document.getElementById("fileReceiveToast");
-const acceptFileButton = document.getElementById("acceptFileButton");
-const rejectFileButton = document.getElementById("rejectFileButton");
-const messagesList = document.getElementById("messages");
-let receivedFilePath = null;
-let receivedRoom = null;
 
-// Function to show the file receive toast
+// // Function to show the file receive toast
 function showFileReceiveToast(filePath) {
   receivedFilePath = filePath;
   fileReceiveToast.classList.remove("hidden");
 }
 
-// Event listener for the "Accept" button
-acceptFileButton.addEventListener("click", () => {
-  // Check if a file has been received
-  if (receivedFilePath) {
-    // Create a new list item for the message
-    const listItem = document.createElement("li");
-    const message = `File uploaded to room: ${receivedRoom}`;
-    listItem.textContent = message;
-
-    // Create a button for downloading the file
-    const downloadButton = document.createElement("button");
-    downloadButton.textContent = "Download File";
-    downloadButton.className = "download-button"; // Add a CSS class for styling
-
-    // Attach the file path to the button as a data attribute
-    downloadButton.dataset.filePath = receivedFilePath;
-
-    // Append the download button to the list item
-    listItem.appendChild(downloadButton);
-
-    // Append a line break after the list item
-    listItem.appendChild(document.createElement("br"));
-
-    // Append the list item to the messages list
-    messagesList.appendChild(listItem);
-
-    // Make sure the box is visible when a file is uploaded
-    const box = document.getElementById("box");
-    box.style.display = "block";
-
-    // Hide the toast
-    fileReceiveToast.classList.add("hidden");
-  }
-});
 
 // Event listener for the "Reject" button
 rejectFileButton.addEventListener("click", () => {
+  // Clear the uploaded files data
+  uploadedFilesData.length = 0;
+
   // Hide the toast
   fileReceiveToast.classList.add("hidden");
 });
+
 
 // Add an event listener to handle file download when the button is clicked
 document.addEventListener("click", (event) => {
@@ -240,12 +291,13 @@ socket.on("left", (NAAM) => {
 });
 
 function handleCheckboxChange(checkbox) {
+  const memberName = checkbox.value;
   if (checkbox.checked) {
     // If checkbox is checked, add the name to the selectedMembers array
-    selectedMembers.push(checkbox.value);
+    selectedMembers.push(memberName);
   } else {
     // If checkbox is unchecked, remove the name from the selectedMembers array
-    const index = selectedMembers.indexOf(checkbox.value);
+    const index = selectedMembers.indexOf(memberName);
     if (index !== -1) {
       selectedMembers.splice(index, 1);
     }
