@@ -6,7 +6,7 @@ Certainly, here's a simple README file that provides instructions for setting up
 
 ## Introduction
 
-This repository contains the source code for [Your App Name]. To set up and run the application on your local machine, follow the steps below.
+This repository contains the source code for File-Tranfer-Web-App. To set up and run the application on your local machine, follow the steps below.
 
 ## Prerequisites
 
@@ -22,10 +22,10 @@ Before you begin, make sure you have the following prerequisites installed on yo
    Open your terminal and clone this repository to your local machine:
 
    ```bash
-   git clone https://github.com/yourusername/your-app-name.git
+   git clone https://github.com/yash1378/File-Transfer-Web-app.git
    ```
 
-   Replace `yourusername` and `your-app-name` with your GitHub username and the repository name.
+
 
 2. Navigate to the Project Directory
 
@@ -54,21 +54,13 @@ Before you begin, make sure you have the following prerequisites installed on yo
    ./setup.sh
    ```
 
-   This script will set up and configure your application based on the provided environment variables.
+   This script will set up and configure your application based on the provided environment variables and will also start your application.
 
-5. Start the Application
 
-   Once the setup script completes successfully, you can start your application:
 
-   ```bash
-   npm start
-   ```
+5. Access the Application
 
-   Your application should now be running locally.
-
-6. Access the Application
-
-   Open a web browser and navigate to `http://localhost:3000` (or the specified port) to access your application.
+   Open a web browser and navigate to `http://localhost:3300` (or the specified port) to access your application and can be accessed using your local IP addresss      on phone .
 
 ## Additional Configuration
 
