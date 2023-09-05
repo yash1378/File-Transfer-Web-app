@@ -1,6 +1,5 @@
 const socket = io();
 // Initialize an array to store selected member names
-// Initialize an array to store selected member names
 const selectedMembers = [];
 // Add this at the top of your script.js
 const fileReceiveToast = document.getElementById("fileReceiveToast");
@@ -76,6 +75,8 @@ document.getElementById("joinRoomButton").addEventListener("click", (event) => {
       });
     });
   });
+
+  
 
   socket.on("jointoast", (msg) => {
     const toastContainer = document.createElement("div");

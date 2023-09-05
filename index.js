@@ -1,4 +1,5 @@
 const express = require("express");
+require('dotenv').config()
 const os = require("os");
 const fileUpload = require("express-fileupload");
 const cors = require("cors");
@@ -42,7 +43,7 @@ app.get("/", (req, res) => {
 // Serve files from the specified directory
 app.use(
   "/uploads",
-  express.static("C:/Users/HP/Desktop/New folder/Referrrrer/app")
+  express.static(process.env.server_Route)
 );
 
 
@@ -94,7 +95,7 @@ io.on("connection", (socket) => {
       console.log(uploadedFile.name);
   
       uploadedFile.mv(
-        `C:/Users/HP/Desktop/New folder/Referrrrer/app/${uploadedFile.name}`,
+        `${process.env.server_Route}/${uploadedFile.name}`,
         (err) => {
           if (err) {
             return res.status(500).send(err);
