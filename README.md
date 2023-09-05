@@ -1,8 +1,7 @@
-Certainly, here's a simple README file that provides instructions for setting up your application by cloning the repository and running the `setup.sh` script:
 
 ---
 
-# Your App Name Setup
+# File-Transfer-Web-App Setup
 
 ## Introduction
 
